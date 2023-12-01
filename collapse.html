@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toggle Content</title>
+    <style>
+      .toggle-button {
+        display: block;
+      }
+
+      .content:not(.active) {
+        display: none;
+      }
+
+      .collapsing {
+        overflow: hidden;
+        transition: height 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="toggle-button" data-target="content1">Toggle 1</button>
+    <div class="content" id="content1">
+      <p>Content 1</p>
+    </div>
+    <button class="toggle-button" data-target="content2">Toggle 2</button>
+    <div class="content" id="content2">
+      <p>Content 2</p>
+    </div>
+
+    <script>
+      document.addEventListener("click", handleClick);
+
+      function handleClick(event) {
+        const clickedElement = event.target;
+
+        if (!clickedElement.classList.contains("toggle-button")) return;
+
+        const targetContentId = clickedElement.getAttribute("data-target");
+        const content = document.getElementById(targetContentId);
+
+        const isTransitioning = content.classList.contains("collapsing");
+
+        if (!content || isTransitioning) return;
+
+        const isActive = content.classList.contains("active");
+
+        if (isActive) return hide(content);
+
+        show(content);
+      }
+
+      function show(element) {
+        element.classList.add("active", "collapsing");
+        element.style.height = 0;
+        element.style.height = `${element.scrollHeight}px`;
+
+        onTransitionEnd(element, () => {
+          element.classList.remove("collapsing");
+          element.style.height = "";
+        });
+      }
+
+      function hide(element) {
+        element.classList.add("collapsing");
+        element.style.height = `${element.scrollHeight}px`;
+        element.offsetWidth;
+        element.style.height = 0;
+
+        onTransitionEnd(element, () => {
+          element.classList.remove("active", "collapsing");
+          element.style.height = "";
+        });
+      }
+
+      function onTransitionEnd(element, callback) {
+        element.addEventListener("transitionend", callback, { once: true });
+      }
+    </script>
+  </body>
+</html>
